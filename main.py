@@ -1,6 +1,7 @@
 import flet as ft
 
 from utils.efile_stats import get_stats
+from utils.create_new_efile import create_new_file
 
 
 def main(page: ft.Page):
@@ -31,6 +32,13 @@ def main(page: ft.Page):
             ft.Text(f"Номера актов: {', '.join(stats['not_empty_akts_num'])}")
         )
         list_view_stats.update()
+    
+    def parse_file(e):
+        create_new_file(selected_files.value)
+        list_view_stats.controls.append(
+            ft.Text(f"Файл преобразован")
+        )
+        list_view_stats.update()
 
     pick_files_dialog = ft.FilePicker(on_result=pick_files_result)
     # Путь до файла
@@ -52,6 +60,12 @@ def main(page: ft.Page):
         text='Статистика',
         on_click=view_stats
     )
+    # Кнопка преобразования файла
+    new_file_btn = ft.ElevatedButton(
+        text='Преобразовать файл',
+        on_click=parse_file,
+        bgcolor=ft.colors.PURPLE_100,
+    )
 
     page.overlay.append(pick_files_dialog)
 
@@ -63,7 +77,12 @@ def main(page: ft.Page):
             ]
         ),
         list_view_stats,
-        view_stats_btn
+        ft.Row(
+            [
+                view_stats_btn,
+                new_file_btn
+            ]
+        )
     )
 
 ft.app(target=main)
